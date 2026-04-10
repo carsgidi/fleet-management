@@ -844,10 +844,17 @@ export default function ReservePage() {
   };
 
   return (
-    <main className="min-h-screen bg-cover bg-center bg-no-repeat pt-3 pb-8 px-3 sm:px-4" style={{ backgroundImage: "url('/reserve-background.png')" }}>
-      <div className="mx-auto w-full max-w-7xl grid gap-6 lg:gap-8 lg:grid-cols-3">
+    <main className="min-h-screen bg-cover bg-center bg-no-repeat pt-2 pb-24 px-3 sm:pt-3 sm:pb-28 sm:px-4 flex flex-col" style={{ backgroundImage: "url('/reserve-background.png')" }}>
+      <header className="sticky top-0 left-0 right-0 z-30 mb-3 border-b border-black/10 bg-white/85 px-3 py-2.5 backdrop-blur sm:mb-4 sm:px-4 sm:py-3">
+        <div className="mx-auto w-full max-w-7xl">
+          <p className="text-center text-2xl sm:text-4xl md:text-5xl font-black tracking-[0.18em] sm:tracking-[0.22em] bg-gradient-to-r from-amber-500 via-orange-500 to-rose-500 bg-clip-text text-transparent drop-shadow-[0_2px_6px_rgba(0,0,0,0.3)] -rotate-1">
+            Carsgidi
+          </p>
+        </div>
+      </header>
+
+      <div className="mx-auto w-full max-w-7xl grid gap-6 lg:gap-8 lg:grid-cols-3 flex-1">
         <section className="rounded-3xl border border-black/10 bg-white/80 backdrop-blur p-6 md:p-8 shadow-[0_18px_60px_-20px_rgba(120,53,15,0.5)] lg:col-span-2">
-          <p className="text-xs tracking-[0.24em] uppercase text-amber-800 font-semibold">Carsgidi Reservation</p>
           <h1 className="mt-3 text-3xl sm:text-4xl font-black leading-tight text-zinc-900">Reserve Your Perfect Ride Online</h1>
           <p className="mt-4 text-zinc-700 leading-relaxed">
             No login required. Tell us who is driving, choose your dates, complete payment, and lock in your Carsgidi rental in minutes.
@@ -1311,7 +1318,7 @@ export default function ReservePage() {
           </form>
         </section>
 
-        <section className="rounded-3xl border border-black/10 bg-zinc-950 text-zinc-100 p-6 sm:p-8 shadow-[0_24px_80px_-24px_rgba(0,0,0,0.7)] lg:col-span-1 h-fit lg:sticky lg:top-4">
+        <section className="rounded-3xl border border-black/10 bg-zinc-950 text-zinc-100 p-6 sm:p-8 shadow-[0_24px_80px_-24px_rgba(0,0,0,0.7)] lg:col-span-1 h-fit lg:sticky lg:top-24">
           <h2 className="text-2xl font-bold">Reservation Preview</h2>
           <p className="mt-2 text-sm text-zinc-300">Live estimate based on your selected vehicle and dates.</p>
 
@@ -1367,6 +1374,20 @@ export default function ReservePage() {
           </p>
         </section>
       </div>
+
+      <footer className="fixed bottom-0 left-0 right-0 z-40 border-t border-white/20 bg-black/95 px-3 py-2.5 text-center text-xs text-white backdrop-blur sm:px-4 sm:py-3 sm:text-sm">
+        <div className="mx-auto w-full max-w-7xl">
+          <p className="font-semibold text-white">Need help with your reservation?</p>
+          <div className="mt-1 flex flex-col items-center gap-1 sm:flex-row sm:flex-wrap sm:justify-center sm:items-center sm:gap-4">
+            <a href="mailto:support@carsgidi.com" className="text-white hover:text-zinc-200">
+              support@carsgidi.com
+            </a>
+            <a href="tel:+14702382358" className="text-white hover:text-zinc-200">
+              +1 (470) 238-2358
+            </a>
+          </div>
+        </div>
+      </footer>
     </main>
   );
 }

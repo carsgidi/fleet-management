@@ -15,8 +15,11 @@ const {
   reevaluateVehicleStatus,
 } = require("./vehicleStatusService");
 const { hasSmtpConfig, sendEmail } = require("./emailService");
+const twilio = require("twilio");
 
 const SERVICE_CHARGE_DAILY = 15;
+const PRECHECKOUT_AUTO_MARKER_TYPE = "precheckout_prompt_auto_sent";
+let twilioClient;
 
 function buildAppError(message, statusCode = 400, errors = null) {
   const error = new Error(message);
@@ -82,6 +85,22 @@ function normalizePhone(value) {
 function normalizeName(value) {
   if (!value) return "";
   return String(value).trim().toLowerCase();
+}
+
+function hasTwilioSmsConfig() {
+  return Boolean(
+    process.env.TWILIO_ACCOUNT_SID &&
+      process.env.TWILIO_AUTH_TOKEN &&
+      process.env.TWILIO_FROM_NUMBER
+  );
+}
+
+function getTwilioClient() {
+  if (!twilioClient) {
+    twilioClient = twilio(process.env.TWILIO_ACCOUNT_SID, process.env.TWILIO_AUTH_TOKEN);
+  }
+
+  return twilioClient;
 }
 
 function getMinimumAllowedDateOfBirth(today = new Date()) {
@@ -276,9 +295,11 @@ async function getBookings(filters = {}) {
       include: {
         customer: true,
         vehicle: true,
+        checkout: true,
+        checkin: true,
       },
       orderBy: {
-        pickupDatetime: "desc",
+        id: "desc",
       },
       skip,
       take: Number(limit),
@@ -931,19 +952,7 @@ async function findPublicCustomerByContact(contact = {}) {
   return customer;
 }
 
-async function createGuestPrecheckoutLink(bookingId) {
-  const booking = await prisma.booking.findUnique({
-    where: { id: Number(bookingId) },
-    include: {
-      customer: true,
-      vehicle: true,
-    },
-  });
-
-  if (!booking) {
-    throw buildAppError("Booking not found", 404);
-  }
-
+function createPrecheckoutTokenFromBooking(booking) {
   const email = normalizeEmail(booking.customer?.email);
   const lastName = normalizeName(booking.customer?.lastName);
 
@@ -967,31 +976,37 @@ async function createGuestPrecheckoutLink(bookingId) {
   const frontendBase = process.env.FRONTEND_BASE_URL || "http://localhost:3000";
   const link = `${frontendBase.replace(/\/$/, "")}/guest-precheckout/${token}`;
 
-  let emailSent = false;
-  let deliveryMessage = "Pre-checkout link generated. SMTP not configured; share link manually.";
+  return {
+    token,
+    link,
+    email,
+    lastName,
+  };
+}
 
+async function sendPrecheckoutEmail({ booking, to, link }) {
   const subject = `Complete pre-checkout for booking #${booking.id}`;
   const html = `<p>Hello ${booking.customer.firstName || "Guest"},</p><p>Please complete your pre-checkout identity step using this secure link:</p><p><a href="${link}">${link}</a></p>`;
   const text = `Complete pre-checkout for booking #${booking.id}: ${link}`;
 
   if (hasSmtpConfig()) {
     try {
-      const result = await sendEmail({
-        to: email,
-        subject,
-        html,
-        text,
-      });
-
-      emailSent = result.sent;
-      deliveryMessage = result.sent
-        ? "Pre-checkout link sent to guest email."
-        : "Link generated, but SMTP dispatch failed.";
+      const result = await sendEmail({ to, subject, html, text });
+      return {
+        sent: result.sent,
+        message: result.sent
+          ? "Pre-checkout link sent to guest email."
+          : "Email dispatch failed.",
+      };
     } catch {
-      emailSent = false;
-      deliveryMessage = "Link generated, but SMTP dispatch failed.";
+      return {
+        sent: false,
+        message: "Email dispatch failed.",
+      };
     }
-  } else if (process.env.PRECHECKOUT_EMAIL_WEBHOOK_URL) {
+  }
+
+  if (process.env.PRECHECKOUT_EMAIL_WEBHOOK_URL) {
     try {
       const response = await fetch(process.env.PRECHECKOUT_EMAIL_WEBHOOK_URL, {
         method: "POST",
@@ -999,7 +1014,7 @@ async function createGuestPrecheckoutLink(bookingId) {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          to: email,
+          to,
           subject,
           html,
           text,
@@ -1007,23 +1022,259 @@ async function createGuestPrecheckoutLink(bookingId) {
         }),
       });
 
-      emailSent = response.ok;
-      deliveryMessage = response.ok
-        ? "Pre-checkout link sent to guest email."
-        : "Link generated, but email dispatch failed.";
+      return {
+        sent: response.ok,
+        message: response.ok
+          ? "Pre-checkout link sent to guest email."
+          : "Email dispatch failed.",
+      };
     } catch {
-      emailSent = false;
-      deliveryMessage = "Link generated, but email dispatch failed.";
+      return {
+        sent: false,
+        message: "Email dispatch failed.",
+      };
     }
   }
 
   return {
+    sent: false,
+    message: "SMTP/webhook email provider not configured.",
+  };
+}
+
+async function sendPrecheckoutSms({ booking, phone, link }) {
+  const normalizedPhone = normalizePhone(phone);
+
+  if (!normalizedPhone) {
+    return {
+      sent: false,
+      message: "Guest phone not available.",
+    };
+  }
+
+  const smsBody = `Carsgidi booking #${booking.id}: complete pre-checkout here ${link}`;
+  let twilioAttempted = false;
+  let twilioFailed = false;
+
+  if (hasTwilioSmsConfig()) {
+    twilioAttempted = true;
+    try {
+      const client = getTwilioClient();
+      const response = await client.messages.create({
+        to: normalizedPhone,
+        from: process.env.TWILIO_FROM_NUMBER,
+        body: smsBody,
+      });
+
+      if (response?.sid) {
+        return {
+          sent: true,
+          message: "Pre-checkout link sent by SMS via Twilio.",
+        };
+      }
+    } catch {
+      twilioFailed = true;
+    }
+  }
+
+  if (!process.env.PRECHECKOUT_SMS_WEBHOOK_URL) {
+    if (twilioAttempted && twilioFailed) {
+      return {
+        sent: false,
+        message: "Twilio dispatch failed and SMS webhook is not configured.",
+      };
+    }
+
+    return {
+      sent: false,
+      message: "SMS provider not configured.",
+    };
+  }
+
+  try {
+    const response = await fetch(process.env.PRECHECKOUT_SMS_WEBHOOK_URL, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        to: normalizedPhone,
+        message: smsBody,
+        bookingId: booking.id,
+      }),
+    });
+
+    return {
+      sent: response.ok,
+      message: response.ok
+        ? twilioFailed
+          ? "Twilio dispatch failed; pre-checkout link sent by SMS via webhook."
+          : "Pre-checkout link sent by SMS via webhook."
+        : twilioFailed
+          ? "Twilio dispatch failed and webhook dispatch failed."
+          : "SMS webhook dispatch failed.",
+    };
+  } catch {
+    return {
+      sent: false,
+      message: twilioFailed
+        ? "Twilio dispatch failed and webhook dispatch failed."
+        : "SMS webhook dispatch failed.",
+    };
+  }
+}
+
+async function markAutoPrecheckoutPromptSent(bookingId) {
+  await prisma.document.create({
+    data: {
+      bookingId: Number(bookingId),
+      documentType: PRECHECKOUT_AUTO_MARKER_TYPE,
+      fileUrl: `sent:${new Date().toISOString()}`,
+    },
+  });
+}
+
+async function hasAutoPrecheckoutPromptMarker(bookingId) {
+  const marker = await prisma.document.findFirst({
+    where: {
+      bookingId: Number(bookingId),
+      documentType: PRECHECKOUT_AUTO_MARKER_TYPE,
+    },
+    select: {
+      id: true,
+    },
+  });
+
+  return Boolean(marker);
+}
+
+async function sendPrecheckoutPromptForBooking(bookingId, options = {}) {
+  const {
+    automatic = false,
+  } = options;
+
+  const booking = await prisma.booking.findUnique({
+    where: { id: Number(bookingId) },
+    include: {
+      customer: true,
+      vehicle: true,
+    },
+  });
+
+  if (!booking) {
+    throw buildAppError("Booking not found", 404);
+  }
+
+  if (booking.status !== "reserved") {
+    return {
+      bookingId: booking.id,
+      skipped: true,
+      message: "Booking is not in reserved state.",
+    };
+  }
+
+  const pickupTime = new Date(booking.pickupDatetime).getTime();
+  const nowTime = Date.now();
+  const msToPickup = pickupTime - nowTime;
+
+  if (automatic) {
+    const within24Hours = msToPickup > 0 && msToPickup <= 24 * 60 * 60 * 1000;
+    if (!within24Hours) {
+      return {
+        bookingId: booking.id,
+        skipped: true,
+        message: "Booking is outside automatic pre-checkout window.",
+      };
+    }
+
+    const alreadySent = await hasAutoPrecheckoutPromptMarker(booking.id);
+    if (alreadySent) {
+      return {
+        bookingId: booking.id,
+        skipped: true,
+        message: "Automatic pre-checkout prompt already sent.",
+      };
+    }
+  }
+
+  const { token, link, email } = createPrecheckoutTokenFromBooking(booking);
+
+  const emailResult = await sendPrecheckoutEmail({
+    booking,
+    to: email,
+    link,
+  });
+
+  const smsResult = await sendPrecheckoutSms({
+    booking,
+    phone: booking.customer?.phone,
+    link,
+  });
+
+  const anySent = emailResult.sent || smsResult.sent;
+
+  if (automatic && anySent) {
+    await markAutoPrecheckoutPromptSent(booking.id);
+  }
+
+  const deliveryMessage = anySent
+    ? "Pre-checkout prompt sent to guest."
+    : "Pre-checkout link generated, but delivery failed.";
+
+  return {
     bookingId: booking.id,
     guestEmail: email,
+    guestPhone: normalizePhone(booking.customer?.phone),
     link,
     token,
-    emailSent,
+    emailSent: emailResult.sent,
+    smsSent: smsResult.sent,
+    emailMessage: emailResult.message,
+    smsMessage: smsResult.message,
     message: deliveryMessage,
+  };
+}
+
+async function createGuestPrecheckoutLink(bookingId) {
+  return sendPrecheckoutPromptForBooking(bookingId, { automatic: false });
+}
+
+async function processAutomaticPrecheckoutPrompts() {
+  const now = new Date();
+  const windowEnd = new Date(now.getTime() + 24 * 60 * 60 * 1000);
+
+  const upcomingBookings = await prisma.booking.findMany({
+    where: {
+      status: "reserved",
+      pickupDatetime: {
+        gt: now,
+        lte: windowEnd,
+      },
+    },
+    select: {
+      id: true,
+    },
+  });
+
+  let sent = 0;
+  let skipped = 0;
+
+  for (const booking of upcomingBookings) {
+    const result = await sendPrecheckoutPromptForBooking(booking.id, {
+      automatic: true,
+    });
+
+    if (result.skipped) {
+      skipped += 1;
+    } else if (result.emailSent || result.smsSent) {
+      sent += 1;
+    }
+  }
+
+  return {
+    scanned: upcomingBookings.length,
+    sent,
+    skipped,
   };
 }
 
@@ -1517,6 +1768,7 @@ module.exports = {
   createBooking,
   createPublicReservation,
   createGuestPrecheckoutLink,
+  processAutomaticPrecheckoutPrompts,
   getPrecheckoutBookingByToken,
   uploadPrecheckoutGuestDocument,
   getBookingByManageToken,

@@ -266,7 +266,7 @@ export default function BookingDetailPage() {
             </div>
           </div>
 
-          <div className="bg-white rounded-xl shadow p-6">
+          <div id="checkout-details" className="bg-white rounded-xl shadow p-6">
             <h2 className="text-xl font-semibold mb-4">Checkout Details</h2>
             {booking.checkout ? (
               <div className="space-y-2">
@@ -312,7 +312,7 @@ export default function BookingDetailPage() {
             )}
           </div>
 
-          <div className="bg-white rounded-xl shadow p-6">
+          <div id="checkin-details" className="bg-white rounded-xl shadow p-6">
             <h2 className="text-xl font-semibold mb-4">Checkin Details</h2>
             {booking.checkin ? (
               <div className="space-y-2">
