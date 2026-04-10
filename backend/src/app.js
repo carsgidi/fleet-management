@@ -8,6 +8,7 @@ const customerRoutes = require("./routes/customerRoutes");
 const dashboardRoutes = require("./routes/dashboardRoutes");
 const maintenanceRoutes = require("./routes/maintenanceRoutes");
 const vehicleRoutes = require("./routes/vehicleRoutes");
+const publicRoutes = require("./routes/publicRoutes");
 
 const app = express();
 
@@ -22,6 +23,7 @@ app.use("/api/customers", customerRoutes);
 app.use("/api/dashboard", dashboardRoutes);
 app.use("/api/maintenance", maintenanceRoutes);
 app.use("/api/vehicles", vehicleRoutes);
+app.use("/api/public", publicRoutes);
 
 app.use((req, res, next) => {
   const error = new Error(`Not Found - ${req.originalUrl}`);

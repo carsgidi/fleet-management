@@ -296,6 +296,112 @@ async function createBooking(data) {
   };
 }
 
+function validatePublicReservationPayload(data = {}) {
+  const errors = {};
+  const customer = data.customer || {};
+
+  if (!customer.firstName || !String(customer.firstName).trim()) {
+    errors.firstName = "First name is required";
+  }
+
+  if (!customer.lastName || !String(customer.lastName).trim()) {
+    errors.lastName = "Last name is required";
+  }
+
+  if (!customer.email && !customer.phone) {
+    errors.contact = "Either email or phone is required";
+  }
+
+  if (customer.email) {
+    const email = String(customer.email).trim();
+    const isValidEmail = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+    if (!isValidEmail) {
+      errors.email = "Email format is invalid";
+    }
+  }
+
+  if (!data.vehicleId) {
+    errors.vehicleId = "Vehicle is required";
+  }
+
+  if (!data.pickupDatetime) {
+    errors.pickupDatetime = "Pickup datetime is required";
+  }
+
+  if (!data.returnDatetime) {
+    errors.returnDatetime = "Return datetime is required";
+  }
+
+  if (Object.keys(errors).length > 0) {
+    throw buildAppError("Validation failed", 400, errors);
+  }
+}
+
+async function findOrCreatePublicCustomer(customerData) {
+  const firstName = String(customerData.firstName || "").trim();
+  const lastName = String(customerData.lastName || "").trim();
+  const email = customerData.email ? String(customerData.email).trim().toLowerCase() : null;
+  const phone = customerData.phone ? String(customerData.phone).trim() : null;
+  const driversLicenseNo = customerData.driversLicenseNo
+    ? String(customerData.driversLicenseNo).trim()
+    : null;
+
+  if (email) {
+    const existingByEmail = await prisma.customer.findUnique({
+      where: { email },
+    });
+
+    if (existingByEmail) {
+      return prisma.customer.update({
+        where: { id: existingByEmail.id },
+        data: {
+          firstName: firstName || existingByEmail.firstName,
+          lastName: lastName || existingByEmail.lastName,
+          phone: phone || existingByEmail.phone,
+          driversLicenseNo: driversLicenseNo || existingByEmail.driversLicenseNo,
+        },
+      });
+    }
+  }
+
+  try {
+    return await prisma.customer.create({
+      data: {
+        firstName,
+        lastName,
+        email,
+        phone,
+        driversLicenseNo,
+      },
+    });
+  } catch (error) {
+    if (error.code === "P2002" && email) {
+      const fallbackCustomer = await prisma.customer.findUnique({
+        where: { email },
+      });
+      if (fallbackCustomer) {
+        return fallbackCustomer;
+      }
+    }
+
+    throw error;
+  }
+}
+
+async function createPublicReservation(data) {
+  validatePublicReservationPayload(data);
+
+  const customer = await findOrCreatePublicCustomer(data.customer || {});
+
+  return createBooking({
+    customerId: customer.id,
+    vehicleId: data.vehicleId,
+    pickupDatetime: data.pickupDatetime,
+    returnDatetime: data.returnDatetime,
+    status: "reserved",
+  });
+}
+
 async function updateBooking(id, data) {
   const existingBooking = await getBookingById(id);
 
@@ -574,6 +680,7 @@ module.exports = {
   getBookings,
   getBookingById,
   createBooking,
+  createPublicReservation,
   updateBooking,
   rescheduleBooking,
   changeBookingStatus,
