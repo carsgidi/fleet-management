@@ -852,7 +852,7 @@ export default function ReservePage() {
       <header className="sticky top-0 left-0 right-0 z-30 mb-3 border-b border-white/10 bg-[#03396c] px-3 py-2.5 backdrop-blur-xl sm:mb-4 sm:px-4 sm:py-3 shadow-[0_8px_24px_-12px_rgba(0,0,0,0.7)]">
         <div className="mx-auto w-full max-w-7xl">
           <div className="flex items-center justify-start gap-3 sm:gap-4">
-            <div className="flex h-11 w-[170px] items-center rounded-md bg-zinc-900/70 px-2 sm:h-12 sm:w-[190px]">
+            <div className="flex h-11 w-[170px] items-center rounded-md bg-[#03396c] px-2 sm:h-12 sm:w-[190px]">
               {showHeaderLogo ? (
                 <Image
                   src="/carsgidi-logo.png"
@@ -864,7 +864,7 @@ export default function ReservePage() {
                   onError={() => setShowHeaderLogo(false)}
                 />
               ) : (
-                <span className="text-lg font-black tracking-tight text-zinc-100 sm:text-xl">carsgidi</span>
+                <span className="text-3xl font-black leading-none tracking-tight text-zinc-100 sm:text-[2.1rem]">carsgidi</span>
               )}
             </div>
           </div>
