@@ -1,135 +1,102 @@
-# Georgia Vehicle Rental Terms and Conditions
+# TERMS AND CONDITIONS
 
-Disclaimer: This template is for operational use and should be reviewed by licensed Georgia counsel before production use.
+Dekaz LLC d/b/a Carsgidi ("Carsgidi," "we," "us," or "our")
 
-## 1. Parties and Booking Details
+Effective Date: April 10, 2026
 
-- Rental Company: {{companyName}}
-- Guest (Renter): {{guestFullName}}
-- Guest Email: {{guestEmail}}
-- Guest Phone: {{guestPhone}}
-- Driver License No.: {{driversLicenseNo}}
-- Date of Birth: {{dateOfBirth}}
-- Booking ID: {{bookingId}}
-- Booking Date: {{bookingDate}}
+## 1. ACCEPTANCE OF TERMS
 
-## 2. Vehicle Details
+By making a reservation, renting, or operating a vehicle from Carsgidi, you agree to be bound by these Terms and Conditions, the rental agreement executed at vehicle pickup, and all policies incorporated by reference. If you do not agree, you are not authorized to use our vehicles or services.
 
-- Vehicle: {{vehicleYear}} {{vehicleMake}} {{vehicleModel}}
-- Plate Number: {{plateNumber}}
-- VIN: {{vin}}
-- Fuel Type: {{fuelType}}
-- Transmission: {{transmission}}
-- Passenger Capacity: {{passengerCapacity}}
-- Odometer Out: {{odometerOut}}
-- Fuel Level Out: {{fuelLevelOut}}
+## 2. ELECTRONIC TRANSACTIONS
 
-## 3. Rental Period
+You consent to the use of electronic records, signatures, and communications, all of which shall have the same legal effect as originals.
 
-- Pickup Date/Time: {{pickupDateTime}}
-- Return Date/Time: {{returnDateTime}}
-- Pickup Location: {{pickupLocation}}
-- Return Location: {{returnLocation}}
+## 3. DRIVER QUALIFICATIONS
 
-The renter agrees to return the vehicle on or before the return date/time above. Late returns may result in additional charges.
+All renters and drivers must hold a valid driver's license, meet minimum age standards, present an acceptable form of payment, and satisfy Carsgidi's verification requirements. Additional qualifications may apply for specialty vehicles.
 
-## 4. Charges and Payment Authorization
+## 4. RESERVATIONS AND VEHICLE ASSIGNMENT
 
-The renter authorizes charges to the payment method on file for the following items:
+Reservations do not guarantee a specific vehicle. Carsgidi may substitute, modify, or cancel reservations due to availability, eligibility, payment issues, or operational needs.
 
-- Daily Rate: ${{dailyRate}}
-- Estimated Rental Days: {{rentalDays}}
-- Estimated Subtotal: ${{subtotal}}
-- Estimated Taxes and Fees: ${{taxesAndFees}}
-- Security Deposit: ${{deposit}}
-- Estimated Total: ${{estimatedTotal}}
+## 5. DEPOSITS AND AUTHORIZATION HOLDS
 
-Additional charges may include, where applicable:
+An authorization hold or security deposit may be required to cover estimated charges and potential post-rental costs. Release timing is subject to your financial institution.
 
-- Late return fees
-- Fuel replacement charges
-- Tolls, citations, and parking violations
-- Cleaning fees beyond normal wear
-- Damage, loss of use, administrative, and recovery fees
+## 6. PAYMENT AUTHORIZATION
 
-Payment Reference: {{paymentReference}}
+You authorize Carsgidi to charge your payment method for all rental-related charges, including post-rental adjustments and fees.
 
-## 5. Driver Eligibility and Use Restrictions
+## 7. CANCELLATIONS AND NO-SHOWS
 
-The renter confirms and agrees:
+Cancellation and no-show fees apply as disclosed at the time of booking.
 
-- The renter holds a valid driver license and is legally permitted to drive in Georgia.
-- The renter is at least {{minimumDriverAge}} years old.
-- No unauthorized driver may operate the vehicle.
-- The vehicle will not be used for illegal activity, racing, towing (unless authorized), ride-share/commercial service (unless authorized), off-road use, or under the influence of alcohol/drugs.
+## 8. FINAL CHARGES
 
-## 6. Insurance and Responsibility
+Your final bill may differ from estimates based on rental duration, mileage, tolls, fuel or charging usage, optional products, damage, or cleaning fees.
 
-The renter is responsible for loss or damage to the vehicle to the extent allowed by Georgia law and this agreement, including third-party property damage and bodily injury, subject to available insurance coverage and policy terms.
+## 9. USE RESTRICTIONS
 
-The renter confirms insurance details:
+The vehicle may only be used for lawful purposes. Prohibited uses include racing, reckless driving, unauthorized off-road use, commercial activity, rideshare or delivery services without written approval, towing, or impaired driving.
 
-- Insurer: {{insurerName}}
-- Policy Number: {{policyNumber}}
-- Coverage Verified: {{coverageVerified}}
+## 10. RESPONSIBILITY FOR VEHICLE
 
-## 7. Accidents, Damage, and Reporting
+You are responsible for the vehicle and all related loss or damage until it is returned and accepted by Carsgidi.
 
-In the event of an accident, theft, or damage, renter must:
+## 11. INSURANCE AND FINANCIAL RESPONSIBILITY
 
-1. Stop and secure the scene when safe.
-2. Notify emergency services as required.
-3. Notify rental company immediately at {{supportPhone}} and {{supportEmail}}.
-4. Provide truthful incident details and cooperate with claims handling.
+You must maintain financial responsibility consistent with Georgia law. Your personal insurance, if applicable, is primary. Optional protection products may be offered.
 
-Failure to promptly report incidents may result in additional liability to the extent allowed by law.
+## 12. LOSS DAMAGE WAIVER (LDW)
 
-## 8. Vehicle Condition and Return
+LDW is optional and not insurance. When accepted and not voided, it may limit liability subject to exclusions.
 
-The renter acknowledges inspection of the vehicle at pickup and accepts it in current condition except for documented pre-existing damage.
+## 13. DAMAGE, LOSS, AND FEES
 
-At return, the vehicle must be returned with:
+You are responsible for all repair or replacement costs, loss of use, diminished value, towing, storage, appraisal, administrative fees, and applicable taxes.
 
-- All keys and provided accessories
-- Reasonable cleanliness
-- Fuel level at least equal to pickup level unless otherwise stated
+## 14. ACCIDENTS AND INCIDENTS
 
-Odometer In: {{odometerIn}}
-Fuel Level In: {{fuelLevelIn}}
-Return Notes: {{returnNotes}}
+All accidents, damage, or theft must be reported immediately. Failure to report may void optional protections.
 
-## 9. Privacy and Communications Consent
+## 15. FUEL AND ELECTRIC VEHICLES
 
-The renter agrees that {{companyName}} may use contact information for booking administration, rental support, payment notifications, and required legal notices.
+Vehicles must be returned with the same fuel or charge level as provided. Applicable refueling or recharging fees may apply.
 
-## 10. Governing Law and Venue
+## 16. TOLLS AND VIOLATIONS
 
-This agreement is governed by the laws of the State of Georgia, without regard to conflict-of-law principles. Venue for disputes shall be in the county/state specified by law or contract: {{venueCounty}}, Georgia.
+You are responsible for all tolls, tickets, violations, and associated administrative fees.
 
-## 11. Electronic Acceptance by Checkmark
+## 17. TELEMATICS AND VEHICLE SYSTEMS
 
-Please review and check each box:
+Vehicles may utilize GPS and telematics for safety, billing, and recovery purposes. Tampering is prohibited.
 
-- [ ] I confirm that all booking and driver information above is accurate.
-- [ ] I have read and agree to these Georgia Vehicle Rental Terms and Conditions.
-- [ ] I authorize charges described in Section 4, including additional lawful charges.
-- [ ] I understand this electronic checkmark constitutes my signature and agreement.
+## 18. DEFAULT AND VEHICLE RECOVERY
 
-Guest Full Name: {{guestFullName}}
+Carsgidi may repossess or disable a vehicle without notice for non-payment, violations, or safety concerns. You are responsible for recovery-related costs.
 
-Guest Signature (typed): {{guestSignatureTyped}}
+## 19. DISPUTES AND CHARGEBACKS
 
-Acceptance Timestamp: {{acceptanceTimestamp}}
+You agree not to dispute valid charges and acknowledge Carsgidi's right to submit supporting evidence.
 
-IP Address (if captured): {{acceptanceIp}}
+## 20. INDEMNIFICATION
 
-Booking ID: {{bookingId}}
+You agree to indemnify and hold harmless Carsgidi from claims arising from vehicle use or breach of this Agreement.
 
----
+## 21. ARBITRATION AND CLASS ACTION WAIVER
 
-## Optional Audit Fields (System)
+Disputes shall be resolved by binding individual arbitration under the Federal Arbitration Act. Class actions and jury trials are waived.
 
-- Terms Version: {{termsVersion}}
-- Terms Hash: {{termsHash}}
-- User Agent: {{userAgent}}
-- Session ID: {{sessionId}}
+## 22. GOVERNING LAW
+
+This Agreement is governed by the laws of the State of Georgia.
+
+## 23. SEVERABILITY AND ENTIRE AGREEMENT
+
+If any provision is unenforceable, the remainder shall remain in effect. These Terms and the Rental Agreement constitute the entire agreement.
+
+## CONTACT INFORMATION
+Dekaz LLC d/b/a Carsgidi  
+4058 Haleston Rd, Duluth, GA 30097  
+Email: support@carsgidi.com

@@ -163,7 +163,7 @@ export default function BookingsPage() {
       </div>
 
       <div className="bg-white rounded-xl shadow overflow-hidden">
-        <table className="w-full text-sm">
+        <table className="w-full text-xs">
           <thead className="bg-gray-50">
             <tr>
               <th className="text-left px-2 py-1.5 whitespace-nowrap">ID</th>
@@ -227,7 +227,7 @@ export default function BookingsPage() {
 
                   <td className="px-2 py-1.5 whitespace-nowrap">
                     <span
-                      className={`px-3 py-1 rounded-full text-sm font-medium ${getStatusBadge(
+                      className={`px-3 py-1 rounded-full text-xs font-medium ${getStatusBadge(
                         booking.status
                       )}`}
                     >

@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import { useEffect, useMemo, useState } from "react";
 import api from "../../lib/api";
 
@@ -306,6 +307,7 @@ export default function ReservePage() {
   const [lookupInFlight, setLookupInFlight] = useState(false);
   const [lookupMessage, setLookupMessage] = useState("");
   const [showVehicleList, setShowVehicleList] = useState(false);
+  const [showHeaderLogo, setShowHeaderLogo] = useState(true);
   const [termsChecks, setTermsChecks] = useState<TermsChecks>({
     accuracy: false,
     agreement: false,
@@ -844,19 +846,35 @@ export default function ReservePage() {
   };
 
   return (
-    <main className="min-h-screen bg-cover bg-center bg-no-repeat pt-2 pb-24 px-3 sm:pt-3 sm:pb-28 sm:px-4 flex flex-col" style={{ backgroundImage: "url('/reserve-background.png')" }}>
-      <header className="sticky top-0 left-0 right-0 z-30 mb-3 border-b border-black/10 bg-white/85 px-3 py-2.5 backdrop-blur sm:mb-4 sm:px-4 sm:py-3">
+    <main className="relative min-h-screen bg-cover bg-center bg-no-repeat pt-2 pb-44 px-3 sm:pt-3 sm:pb-48 sm:px-4 flex flex-col" style={{ backgroundImage: "url('/reserve-background.png')" }}>
+      <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_top_right,rgba(251,191,36,0.18),transparent_40%),radial-gradient(circle_at_bottom_left,rgba(249,115,22,0.12),transparent_35%)]" />
+
+      <header className="sticky top-0 left-0 right-0 z-30 mb-3 border-b border-white/10 bg-[#03396c] px-3 py-2.5 backdrop-blur-xl sm:mb-4 sm:px-4 sm:py-3 shadow-[0_8px_24px_-12px_rgba(0,0,0,0.7)]">
         <div className="mx-auto w-full max-w-7xl">
-          <p className="text-center text-2xl sm:text-4xl md:text-5xl font-black tracking-[0.18em] sm:tracking-[0.22em] bg-gradient-to-r from-amber-500 via-orange-500 to-rose-500 bg-clip-text text-transparent drop-shadow-[0_2px_6px_rgba(0,0,0,0.3)] -rotate-1">
-            Carsgidi
-          </p>
+          <div className="flex items-center justify-start gap-3 sm:gap-4">
+            <div className="flex h-11 w-[170px] items-center rounded-md bg-zinc-900/70 px-2 sm:h-12 sm:w-[190px]">
+              {showHeaderLogo ? (
+                <Image
+                  src="/carsgidi-logo.png"
+                  alt="Carsgidi logo"
+                  width={168}
+                  height={48}
+                  className="h-auto w-full object-contain object-left invert brightness-125 contrast-110"
+                  priority
+                  onError={() => setShowHeaderLogo(false)}
+                />
+              ) : (
+                <span className="text-lg font-black tracking-tight text-zinc-100 sm:text-xl">carsgidi</span>
+              )}
+            </div>
+          </div>
         </div>
       </header>
 
-      <div className="mx-auto w-full max-w-7xl grid gap-6 lg:gap-8 lg:grid-cols-3 flex-1">
-        <section className="rounded-3xl border border-black/10 bg-white/80 backdrop-blur p-6 md:p-8 shadow-[0_18px_60px_-20px_rgba(120,53,15,0.5)] lg:col-span-2">
-          <h1 className="mt-3 text-3xl sm:text-4xl font-black leading-tight text-zinc-900">Reserve Your Perfect Ride Online</h1>
-          <p className="mt-4 text-zinc-700 leading-relaxed">
+      <div className="relative z-10 mx-auto w-full max-w-7xl grid gap-6 lg:gap-8 lg:grid-cols-3 flex-1">
+        <section className="rounded-3xl border border-white/70 bg-white/88 backdrop-blur-xl p-6 md:p-8 shadow-[0_30px_90px_-38px_rgba(15,23,42,0.45)] ring-1 ring-black/5 lg:col-span-2">
+          <h1 className="mt-1 text-3xl sm:text-4xl font-black leading-tight text-zinc-900">Your Move Starts Here</h1>
+          <p className="mt-3 text-zinc-700 leading-relaxed">
             No login required. Tell us who is driving, choose your dates, complete payment, and lock in your Carsgidi rental in minutes.
           </p>
 
@@ -894,10 +912,10 @@ export default function ReservePage() {
 
             <div className="md:col-span-2 xl:col-span-4">
               <label className="block mb-1 text-sm font-medium text-zinc-700">Available Vehicle</label>
-              <button
+                <button
                 type="button"
                 onClick={() => setShowVehicleList((prev) => !prev)}
-                className="w-full rounded-xl border border-zinc-300 bg-white px-4 py-3 text-left disabled:opacity-60"
+                  className="w-full rounded-xl border border-zinc-300 bg-white px-4 py-3 text-left shadow-sm transition hover:border-zinc-400 hover:shadow disabled:opacity-60"
               >
                 {!form.pickupDatetime || !form.returnDatetime
                   ? "Set pickup and return date/time first"
@@ -935,7 +953,7 @@ export default function ReservePage() {
                             key={vehicle.id}
                             type="button"
                             onClick={() => handleSelectVehicle(String(vehicle.id))}
-                            className={`w-full border-b border-zinc-100 px-4 py-3 text-left last:border-b-0 hover:bg-zinc-50 ${
+                            className={`w-full border-b border-zinc-100 px-4 py-3 text-left last:border-b-0 transition hover:bg-zinc-50 ${
                               isSelected ? "bg-amber-50" : ""
                             }`}
                           >
@@ -1237,7 +1255,7 @@ export default function ReservePage() {
 
                   <div className="flex flex-wrap items-center gap-3">
                     <a
-                      href="/ga-rental-terms"
+                      href="/terms-and-conditions"
                       target="_blank"
                       rel="noopener noreferrer"
                       className="rounded-lg border border-zinc-300 bg-zinc-100 px-3 py-1.5 text-sm font-medium text-zinc-800 hover:bg-zinc-200"
@@ -1306,7 +1324,7 @@ export default function ReservePage() {
                 <button
                   type="submit"
                   disabled={submitting || loadingVehicles || !form.paymentConfirmed || !allTermsAccepted}
-                  className="md:col-span-2 xl:col-span-4 w-full rounded-xl bg-zinc-900 px-4 py-3 font-semibold text-white disabled:opacity-60"
+                  className="md:col-span-2 xl:col-span-4 w-full rounded-xl bg-zinc-900 px-4 py-3 font-semibold text-white shadow-[0_18px_30px_-14px_rgba(0,0,0,0.55)] transition hover:bg-black disabled:opacity-60"
                 >
                   {submitting ? "Submitting Reservation..." : "Confirm Reservation"}
                 </button>
@@ -1318,7 +1336,7 @@ export default function ReservePage() {
           </form>
         </section>
 
-        <section className="rounded-3xl border border-black/10 bg-zinc-950 text-zinc-100 p-6 sm:p-8 shadow-[0_24px_80px_-24px_rgba(0,0,0,0.7)] lg:col-span-1 h-fit lg:sticky lg:top-24">
+        <section className="rounded-3xl border border-zinc-800/80 bg-zinc-950/95 text-zinc-100 p-6 sm:p-8 shadow-[0_30px_90px_-32px_rgba(0,0,0,0.78)] ring-1 ring-white/5 lg:col-span-1 h-fit lg:sticky lg:top-24">
           <h2 className="text-2xl font-bold">Reservation Preview</h2>
           <p className="mt-2 text-sm text-zinc-300">Live estimate based on your selected vehicle and dates.</p>
 
@@ -1375,16 +1393,58 @@ export default function ReservePage() {
         </section>
       </div>
 
-      <footer className="fixed bottom-0 left-0 right-0 z-40 border-t border-white/20 bg-black/95 px-3 py-2.5 text-center text-xs text-white backdrop-blur sm:px-4 sm:py-3 sm:text-sm">
+      <footer className="fixed bottom-0 left-0 right-0 z-40 border-t border-zinc-700/80 bg-[#03396c] px-3 py-3 text-center text-xs text-white backdrop-blur-xl sm:px-4 sm:py-4 sm:text-sm">
         <div className="mx-auto w-full max-w-7xl">
-          <p className="font-semibold text-white">Need help with your reservation?</p>
-          <div className="mt-1 flex flex-col items-center gap-1 sm:flex-row sm:flex-wrap sm:justify-center sm:items-center sm:gap-4">
-            <a href="mailto:support@carsgidi.com" className="text-white hover:text-zinc-200">
-              support@carsgidi.com
-            </a>
-            <a href="tel:+14702382358" className="text-white hover:text-zinc-200">
-              +1 (470) 238-2358
-            </a>
+          <div className="grid gap-3 text-center sm:gap-4 md:grid-cols-3 md:items-start md:text-left">
+            <div>
+              <p className="font-semibold text-zinc-100">Legal</p>
+              <div className="mt-1 flex flex-col items-center gap-1 md:items-start">
+                <a
+                  href="/terms-and-conditions"
+                  className="text-[11px] font-light tracking-tight text-zinc-200 transition-colors hover:text-amber-300"
+                  style={{ fontFamily: "Lucida Sans, Lucida Sans Unicode, Geneva, Verdana, sans-serif" }}
+                >
+                  Terms and Conditions
+                </a>
+              </div>
+            </div>
+
+            <div>
+              <p className="font-semibold text-zinc-100">Need help with your reservation?</p>
+              <div className="mt-1 flex flex-row flex-wrap items-center justify-center gap-3 md:justify-start">
+                <a
+                  href="mailto:support@carsgidi.com"
+                  className="text-[11px] font-light tracking-tight text-zinc-200 hover:text-amber-300 transition-colors"
+                  style={{ fontFamily: "Lucida Sans, Lucida Sans Unicode, Geneva, Verdana, sans-serif" }}
+                >
+                  support@carsgidi.com
+                </a>
+                <a
+                  href="tel:+14702382358"
+                  className="text-[11px] font-light tracking-tight text-zinc-200 hover:text-amber-300 transition-colors"
+                  style={{ fontFamily: "Lucida Sans, Lucida Sans Unicode, Geneva, Verdana, sans-serif" }}
+                >
+                  +1 (470) 238-2358
+                </a>
+              </div>
+            </div>
+
+            <div className="md:text-right">
+              <p className="font-semibold text-amber-300">Get exclusive deals and discounts</p>
+              <form className="mt-2 flex flex-col items-center gap-2 sm:flex-row sm:justify-center md:justify-end">
+                <input
+                  type="email"
+                  placeholder="Enter your email"
+                  className="w-full sm:w-72 rounded-lg border border-zinc-600 bg-zinc-900/80 px-3 py-2 text-xs text-white placeholder:text-zinc-400 focus:outline-none focus:ring-2 focus:ring-amber-400"
+                />
+                <button
+                  type="button"
+                  className="w-full sm:w-auto rounded-lg bg-amber-400 px-4 py-2 text-xs font-semibold text-zinc-900 transition hover:bg-amber-300"
+                >
+                  Subscribe
+                </button>
+              </form>
+            </div>
           </div>
         </div>
       </footer>
